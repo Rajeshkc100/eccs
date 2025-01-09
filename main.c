@@ -4,6 +4,11 @@
 #include <mysql.h>
 #include <conio.h>
 #include <ctype.h>
+#ifdef _WIN32
+    #include <windows.h> // For Windows
+#else
+    #include <unistd.h>  // For Linux/macOS
+#endif
 
 // Global variables
 MYSQL *conn;
@@ -75,7 +80,7 @@ int main() {
     printf("Welcome, %s!\n", (role == 1) ? "Admin" : "Exam Coordinator");
 
     while (1) {
-        clearScreenWithMessage("Clearing the screen...");
+        clearScreenWithMessage("Loading Menu...");
         displayMenu(role);
         int choice = getValidatedChoice("Enter your choice: ");
 
@@ -85,10 +90,10 @@ int main() {
                     parseAndInsertCSV("students.csv");
                     break;
                 case 2:
-                    unifiedSeatAllocation(maxDays);
+                	configureRooms();
                     break;
                 case 3:
-                    configureRooms();
+                    unifiedSeatAllocation(maxDays);
                     break;
                 case 4:
                     resetTables();
@@ -179,14 +184,18 @@ void clearScreenWithMessage(const char *message) {
     // Display the message
     printf("%s\n", message);
 
-    // Pause for 0.5 seconds to allow the user to read the message
-    sleep(2);
+    // Pause for 2 seconds
+    #ifdef _WIN32
+        Sleep(1000); // Sleep in milliseconds
+    #else
+        sleep(1);    // Sleep in seconds
+    #endif
 
     // Clear the screen based on the operating system
     #ifdef _WIN32
         system("cls");  // Windows
     #else
-        system("clear");  // Linux/macOS
+        system("clear"); // Linux/macOS
     #endif
 }
 
@@ -201,8 +210,8 @@ void displayMenu(int role) {
     if (role == 1) { // Admin menu
         printf("\nAdmin Menu:\n");
         printf("1. Parse and Insert CSV Data\n");
-        printf("2. Allocate Seats\n");
-        printf("3. Configure Rooms\n");
+        printf("2. Configure Rooms\n");
+        printf("3. Allocate Seats\n");
         printf("4. Reset Tables\n");
         printf("5. Export Allocated Seats\n");
         printf("6. Register New User\n");
@@ -425,7 +434,7 @@ void resetTables() {
     }
 
     printf("All tables have been reset successfully.\n");
-    clearScreenWithMessage("Database tables have been reset. Clearing the screen...");
+    clearScreenWithMessage("...");
 }
 
 void unifiedSeatAllocation(int maxDays) {
