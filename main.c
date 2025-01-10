@@ -27,7 +27,9 @@ typedef struct {
 // ==== Function prototypes ====
 // Database-related functions
 int connectDatabase();
+void createDefaultAdminUser();  // Prototype added here
 int parseAndInsertCSV(const char *filename);
+
 
 // Room management functions
 void configureRooms();
@@ -147,8 +149,31 @@ int connectDatabase() {
         mysql_close(conn);
         return EXIT_FAILURE;
     }
+    
+    // Create the default admin user
+    createDefaultAdminUser();
+    
     return EXIT_SUCCESS;
 }
+
+void createDefaultAdminUser() {
+    // SQL query to insert the default admin user into the users table
+    // Username: 'admin', Password: 'admin' (hashed using MD5), Role: 1 (Admin)
+    char query[256];
+    snprintf(query, sizeof(query),
+             "INSERT IGNORE INTO users (username, password, role) "
+             "VALUES ('admin', MD5('admin'), 1)");
+
+    // Execute the query
+    if (mysql_query(conn, query)) {
+        // Log an error if the query execution fails
+        fprintf(stderr, "Error creating default admin user: %s\n", mysql_error(conn));
+    } else {
+        // Log success message if the admin user is created or already exists
+        printf("Default admin user initialized (username: admin, password: admin).\n");
+    }
+}
+
 
 // Function to validate numeric input
 int getValidatedChoice(const char *prompt) {
