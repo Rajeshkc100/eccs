@@ -74,17 +74,17 @@ int main() {
     scanf("%s", username);
 
     if (login(username, &role) == EXIT_FAILURE) {
-        printf("Login failed. Exiting...\n");
+        printf("\nLogin failed. Exiting...\n");
         mysql_close(conn);
         return EXIT_FAILURE;
     }
 
-    printf("Welcome, %s!\n", (role == 1) ? "Admin" : "Exam Coordinator");
+    printf("\nWelcome, %s!\n", (role == 1) ? "Admin" : "Exam Coordinator");
 
     while (1) {
-        clearScreenWithMessage("Loading Menu...");
+        clearScreenWithMessage("\nLoading Menu...");
         displayMenu(role);
-        int choice = getValidatedChoice("Enter your choice: ");
+        int choice = getValidatedChoice("\nEnter your choice: ");
 
         if (role == 1) { // Admin menu
             switch (choice) {
@@ -124,7 +124,7 @@ int main() {
                     exportAllocatedSeatsMatrix("seat_allocation.csv");
                     break;
                 case 3:
-                    printf("Exiting...\n");
+                    printf("\nExiting...\n");
                     mysql_close(conn);
                     return EXIT_SUCCESS;
                 default:
@@ -327,7 +327,7 @@ int parseAndInsertCSV(const char *filename) {
     }
 
     fclose(file);
-    printf("CSV data parsed and inserted successfully.\n");
+    printf("\nCSV data parsed and inserted successfully.\n");
     return EXIT_SUCCESS;
 }
 
@@ -424,13 +424,13 @@ void configureRooms() {
                 if (mysql_query(conn, queryStr)) {
                     fprintf(stderr, "Error deleting room: %s\n", mysql_error(conn));
                 } else {
-                    printf("Room deleted successfully.\n");
+                    printf("\nRoom deleted successfully.\n");
                 }
                 break;
             }
 
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("\nInvalid choice. Please try again.\n");
         }
     }
 
@@ -458,7 +458,7 @@ void resetTables() {
         }
     }
 
-    printf("All tables have been reset successfully.\n");
+    printf("\nAll tables have been reset successfully.\n");
     clearScreenWithMessage("...");
 }
 
@@ -825,7 +825,7 @@ void exportAllocatedSeatsMatrix(const char *filename) {
 
     mysql_free_result(res);
     fclose(file);
-    printf("Seat matrix exported successfully to %s.\n", filename);
+    printf("\nSeat matrix exported successfully to %s.\n", filename);
 }
 
 
@@ -898,7 +898,7 @@ int registerUser() {
         return EXIT_FAILURE;
     }
 
-    printf("User registered successfully.\n");
+    printf("\nUser registered successfully.\n");
     return EXIT_SUCCESS;
 }
 
